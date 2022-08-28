@@ -1,0 +1,26 @@
+name: tfenv
+arch: amd64
+platform: linux
+version: ${VERSION}
+
+maintainer: kittydoor <me@kitty.sh>
+description: Terraform version manager
+homepage: https://github.com/tfutils/tfenv
+license: MIT
+
+changelog: changelog.yml
+
+depends:
+  - grep
+replaces:
+  - terraform
+
+contents:
+  - src: bin/tfenv
+    dst: /usr/bin/tfenv
+
+  - src: bin/terraform
+    dst: /usr/bin/terraform
+
+  - src: lib
+    dst: /usr/lib/tfenv

@@ -1,0 +1,50 @@
+name: 'Release'
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release-ubuntu:
+    if: github.repository == 'kittydoor/tfenv'
+    runs-on: ubuntu-latest
+    name: Release Ubuntu package
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        ref: '${{ github.event.inputs.version }}'
+
+    - name: Force fetch upstream tags
+      run: git fetch --tags --force
+
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1
+
+    - name: Install nfpm
+      run: go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest
+
+    - name: Install chglog
+      run: go install github.com/goreleaser/chglog/cmd/chglog@latest
+
+    - name: Generate changelog.yml
+      run: |
+        chglog config
+        chglog init
+        chglog format --template deb > source.changes
+
+    - name: Build package
+      env:
+        VERSION: ${{ github.ref_name }}
+      run: nfpm package --target tfenv.deb
+
+    - name: Publish to PPA
+      run: dput ppa:kittydoor/tfenv source.changes
+
+# create-release:
+# TODO: Create a Gitub Release here

@@ -5,3 +5,9 @@ bin/terraform-*
 /use-gnupg
 /use-gpgv
 .*.swp
+
+# Release
+changelog.yml
+.chglog.yml
+tfenv.deb
+source.changes
